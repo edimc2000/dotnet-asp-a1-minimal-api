@@ -25,6 +25,7 @@ public class ProductEndpoint
         };
     }
 
+    // should only return 1 item from the list 
     public static List<Product> SearchById(int productid)
     {
         WriteLine($"Searching for product ID: {productid}");
@@ -41,6 +42,7 @@ public class ProductEndpoint
         return product != null ? new List<Product> { product } : new List<Product>();
     }
 
+    // it may return multiple records 
     public static List<Product> SearchByName(string productname)
     {
         WriteLine($"Searching for products starting with: {productname}");
@@ -92,6 +94,41 @@ public class ProductEndpoint
         });
     }
 
+
+    public static IResult DeleteProduct(int productid)
+    {
+        WriteLine($"Attempting to delete product ID: {productid}");
+    
+        var productToDelete = clothingProducts.FirstOrDefault(p => p.ProductId == productid);
+    
+        if (productToDelete == null)
+        {
+            // Option 1: Return 404 (item doesn't exist)
+            return Results.NotFound($"Product with ID {productid} not found");
+        
+            // Option 2: Return 204 anyway (idempotent - same result regardless)
+            // return Results.NoContent();
+        }
+    
+        bool removed = clothingProducts.Remove(productToDelete);
+    
+        if (removed)
+        {
+            // Option 1: Standard REST - 204 No Content
+            //return Results.NoContent();
+
+            // Option 2: Return 200 with message
+            // return Results.Ok($"Product {productid} deleted successfully");
+
+            //Option 3: Return the deleted product
+             return Results.Ok(new { 
+                 message = "Product deleted", 
+                 deletedProduct = productToDelete 
+             });
+        }
+    
+        return Results.Problem("Failed to delete product");
+    }
 
 
 }

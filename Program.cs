@@ -43,8 +43,9 @@ public class Program
 
         app.MapGet("/product/search/id/{productid}", SearchById);
 
-
         app.MapPost("/product/add/{productid}", AddProduct);
+        
+        app.MapDelete("/product/delete/{productid}", DeleteProduct);
 
         app.MapGet("/products/count", () => $"Total products: {clothingProducts.Count}");
 
