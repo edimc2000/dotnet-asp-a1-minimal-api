@@ -37,21 +37,27 @@ public class Program
 
 
         // A1  - Get 
+
+        // ** requirement 1  ** Test 2x
         app.MapGet("/product/show/all", ShowAllProducts);
 
+
+        // ** requirement 2  ** Test 3x
+        app.MapGet("/product/search/id/{productId}", SearchById);
+
+        // lower priority 
         app.MapGet("/product/search/name/{productname}", SearchByName);
 
-        app.MapGet("/product/search/id/{productid}", SearchById);
 
-        app.MapPost("/product/add/{productid}", AddProduct);
-        
-        app.MapDelete("/product/delete/{productid}", DeleteProduct);
+        app.MapPost("/product/add/{productId}", AddProduct);
+
+        app.MapDelete("/product/delete/{productId}", DeleteProduct);
 
         app.MapGet("/products/count", () => $"Total products: {clothingProducts.Count}");
+
 
         app.Run();
     }
 
     public record Person(string FirstName, string LastName);
-
 }
