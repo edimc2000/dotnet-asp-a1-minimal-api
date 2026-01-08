@@ -7,7 +7,7 @@ namespace MinimalApi;
 
 public class ProductEndpoint
 {
-    // ** Final 
+    // **    used for serching by name 
     private static List<Product> ReturnEmpty()
     {
         return new List<Product>
@@ -27,7 +27,6 @@ public class ProductEndpoint
         return Results.BadRequest(new
         {
             success = false,
-            error = "INVALID_INPUT",
             message = $"'{productId}' is not a valid product ID"
         });
     }
@@ -37,26 +36,66 @@ public class ProductEndpoint
         return Results.NotFound(new
         {
             success = false,
-            error = "PRODUCT_NOT_FOUND",
             message = $"Product with ID {productId} not found"
         });
     }
 
+    
+    public static IResult deleteSuccess(Product product)
+    {
+        return Results.Ok(new
+        {
+            success = true,
+            message = "Product deleted",
+            data = product
+        });
+    }
+
+
+    public static IResult searchSuccess(int productId)
+    {
+        return Results.Ok(new 
+        {
+            success = true,
+            message = $"Product with ID {productId} found",
+            data = clothingProducts.Where(p => p.ProductId == productId).ToList()
+        });
+    }
+
+    
+    public static IResult searchAllSuccess()
+    {
+        return Results.Ok(new 
+        {
+            success = true,
+            message =  $"Total of {clothingProducts.Count} products retrieved successfully",
+            data = clothingProducts.ToList(),
+        });
+           
+    }
+
+
+
+
+
+    //private static ApiResult<List<Product>> ReturnError()
+    //{
+    //    return ApiResult<List<Product>>.Failure(
+    //        "Search requires an integer value",
+    //        "INVALID_PRODUCT_ID"
+    //    );
+    //}
+
+
 
     // testing is good 2 tests requirement # 1 
-    public static ApiResult<List<Product>> ShowAllProducts()
+    public static IResult ShowAllProducts()
     {
-        return ApiResult<List<Product>>.SuccessResult(
-            clothingProducts.ToList(),
-            $"Total of {clothingProducts.Count} products retrieved successfully"
-        );
-    }
-    private static ApiResult<List<Product>> ReturnError()
-    {
-        return ApiResult<List<Product>>.Failure(
-            "Search requires an integer value",
-            "INVALID_PRODUCT_ID"
-        );
+        //return ApiResult<List<Product>>.SuccessResult(
+        //    clothingProducts.ToList(),
+        //    $"Total of {clothingProducts.Count} products retrieved successfully"
+        //);
+        return searchAllSuccess();
     }
 
     public static IResult SearchById(string productId)
@@ -77,13 +116,15 @@ public class ProductEndpoint
         if (product == null) return NotFound(id);
 
         // Return success with ApiResult format
-        return Results.Ok(new ApiResult<List<Product>>
-        {
-            Success = true,
-            Message = $"Product with ID {id} found",
-            Error = "",
-            Data = clothingProducts.Where(p => p.ProductId == id).ToList()
-        });
+        //return Results.Ok(new ApiResult<List<Product>>
+        //{
+        //    Success = true,
+        //    Message = $"Product with ID {id} found",
+        //    Error = "",
+        //    Data = clothingProducts.Where(p => p.ProductId == id).ToList()
+        //});
+        return searchSuccess(id);
+
     }
 
 
@@ -143,13 +184,10 @@ public class ProductEndpoint
     public static IResult DeleteProduct(string productId)
     //public static void  DeleteProduct(string productId)
     {
-        
-       
         WriteLine($"---\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}");
         WriteLine($"Value received: '{productId}'");
         WriteLine($"Attempting to delete product ID: {productId}");
-
-
+        
         if (!int.TryParse(productId, out int id))
         {
             WriteLine($"Error: Could not parse '{productId}' to integer");
@@ -169,47 +207,25 @@ public class ProductEndpoint
         bool removed = clothingProducts.Remove(productToDelete);
 
         if (removed)
+
             // Option 1: Standard REST - 204 No Content
             //return Results.NoContent();
             // Option 2: Return 200 with message
             // return Results.Ok($"Product {productid} deleted successfully");
             //Option 3: Return the deleted product
-            return Results.Ok(new
-            {
-                message = "Product deleted",
-                deletedProduct = productToDelete
-            });
 
-        return Results.Problem("Failed to delete product");
+            //return Results.Ok(new
+            //{
+            //    success = true,
+            //    message = "Product deleted",
+            //    deletedProduct = productToDelete
+            //});
+            return deleteSuccess(productToDelete);
+
+        //return Results.Problem("Failed to delete product");
+        return Results.Problem();
     }
 }
 
-public class ApiResult<T>
-{
-    public bool Success { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public string Error { get; set; } = string.Empty;
-    public T? Data { get; set; }
 
-    public static ApiResult<T> Failure(string message, string error = "")
-    {
-        return new ApiResult<T>
-        {
-            Success = false,
-            Message = message,
-            Error = error,
-            Data = default
-        };
-    }
 
-    public static ApiResult<T> SuccessResult(T data, string message = "")
-    {
-        return new ApiResult<T>
-        {
-            Success = true,
-            Message = message,
-            Error = string.Empty,
-            Data = data
-        };
-    }
-}
