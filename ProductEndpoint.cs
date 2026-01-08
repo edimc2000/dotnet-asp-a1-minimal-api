@@ -21,16 +21,7 @@ public class ProductEndpoint
         };
     }
 
-
-    private static ApiResult<List<Product>> ReturnError()
-    {
-        return ApiResult<List<Product>>.Failure(
-            "Search requires an integer value",
-            "INVALID_PRODUCT_ID"
-        );
-    }
-
-
+    
     public static IResult BadRequest(string productId)
     {
         return Results.BadRequest(new
@@ -60,7 +51,13 @@ public class ProductEndpoint
             $"Total of {clothingProducts.Count} products retrieved successfully"
         );
     }
-
+    private static ApiResult<List<Product>> ReturnError()
+    {
+        return ApiResult<List<Product>>.Failure(
+            "Search requires an integer value",
+            "INVALID_PRODUCT_ID"
+        );
+    }
 
     public static IResult SearchById(string productId)
     {
@@ -110,6 +107,7 @@ public class ProductEndpoint
 
     public static IResult AddProduct(int productid, Product product)
     {
+        //debugging 
         WriteLine($"id: {productid}");
         WriteLine($"Name: {product.Name}");
         WriteLine($"Description: {product.Description}");
@@ -142,15 +140,30 @@ public class ProductEndpoint
     }
 
 
-    public static IResult DeleteProduct(int productid)
+    public static IResult DeleteProduct(string productId)
+    //public static void  DeleteProduct(string productId)
     {
-        WriteLine($"Attempting to delete product ID: {productid}");
+        
+       
+        WriteLine($"---\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}");
+        WriteLine($"Value received: '{productId}'");
+        WriteLine($"Attempting to delete product ID: {productId}");
 
-        Product? productToDelete = clothingProducts.FirstOrDefault(p => p.ProductId == productid);
+
+        if (!int.TryParse(productId, out int id))
+        {
+            WriteLine($"Error: Could not parse '{productId}' to integer");
+            //return BadRequest(productId);
+        }
+
+        WriteLine($"Successfully parsed to int: {id}");
+        //Product product = clothingProducts.FirstOrDefault(p => p.ProductId == id);
+        Product? productToDelete = clothingProducts.FirstOrDefault(p => p.ProductId == id);
 
         if (productToDelete == null)
             // Option 1: Return 404 (item doesn't exist)
-            return Results.NotFound($"Product with ID {productid} not found");
+            //return Results.NotFound($"Product with ID {productId} not found");
+            return NotFound(id);
         // Option 2: Return 204 anyway (idempotent - same result regardless)
         // return Results.NoContent();
         bool removed = clothingProducts.Remove(productToDelete);

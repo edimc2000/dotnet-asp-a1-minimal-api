@@ -45,15 +45,21 @@ public class Program
         // ** requirement 2  ** Test 3x
         app.MapGet("/product/search/id/{productId}", SearchById);
 
-        // lower priority 
-        app.MapGet("/product/search/name/{productname}", SearchByName);
 
-
-        app.MapPost("/product/add/{productId}", AddProduct);
 
         app.MapDelete("/product/delete/{productId}", DeleteProduct);
 
+
+
+
+        app.MapPost("/product/add/{productId}", AddProduct);
+        
         app.MapGet("/products/count", () => $"Total products: {clothingProducts.Count}");
+
+
+        
+        // lower priority 
+        app.MapGet("/product/search/name/{productname}", SearchByName);
 
 
         app.Run();
