@@ -55,30 +55,41 @@ The basic operations include
 
 ## API Endpoints
 - Retrieving all the stored products
-	- `Endpoint`			```		/product/show/all
+
+	`Endpoint`			```		/product/show/all
 		```
-	- `Endpoint HTTP Method`			```		GET		
+	`Endpoint HTTP Method`			```		GET		
 		```
-	- `Authentication`
+	`Authentication`
 	
 		```		NONE		
 		```
-	- `Parameters`
+	`Parameters`
 	
 		```		NONE		
 		```
-	- `Request Examples`
+	`Request Examples`
 	
 		```		http://url/product/show/all		
 		```
-	- `Response status codes`
+	`Response status codes`
 	
-		```		Response Status: 200		Response Status Text: OK			Response Status: 405		Response Status Text: Method Not Allowed
-		```
-	- `Sample JSON Response`
 	
 		```	
+		Response Status: 200
+		Response Status Text: OK
 		Response Body: {
+		  success: true,
+		  message: 'Total of 15 products retrieved successfully',
+		  data: [ ...]}
+		```			```	
+		Response Status: 405
+		Response Status Text: Method Not Allowed
+		```
+	`Sample JSON Response`
+	
+		```	
+		{
 		  success: true,
 		  message: 'Total of 15 products retrieved successfully',
 		  data: [
@@ -99,77 +110,76 @@ The basic operations include
 		```
 		
 
-- Searching for product using the ProductId
-- `URL `			```		/product/search/id/{productId}
+- Searching for product using the ProductId	`URL`			```		/product/search/id/{productId}
 		```
-	- `Endpoint HTTP Method `			```		GET		
+		`Endpoint HTTP Method `			```		GET		
 		```
-	- `Authentication:`
+	
+	`Authentication`
 	
 		```		NONE		
 		```
-	- `Parameters:`
+
+	`Parameters`
 	
 		```		productId, as number - integer
 		ex. 1
-		```
-	- `Request Examples:`
+			```
+	`Request Examples:`
 	
 		```		http://url/product/search/id/1		
 		```
-	- `Response status codes:`
 	
-		```	
+	`Response status codes:`
+	
+			
 		Response Status: 404
 		Response Status Text: Not Found
 		Response Body: { success: false, message: 'Product with ID 1000 not found' }
-		```
-		```	
-		Response Status: 400
-		Response Status Text: Bad Request
-		Response Body: { success: false, message: "'test' is not a valid product ID" }
-
-		```
-		```	
-		Response Status: 200
-		Response Status Text: OK
-		Response Body: {
-		  success: true,
-		  message: 'Product with ID 1 found',
-		  data: [
-			{
-			  productId: 1,
-			  name: 'Classic White T-Shirt',
-			  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
-			  price: 19.99
-			}
-		  ]
-		}
-		```
-
-
-	- `Sample JSON Response:`
+		
+	--
+ 
+				
+			Response Status: 400
+			Response Status Text: Bad Request
+			Response Body: { success: false, message: "'test' is not a valid product ID" }
+			
 	
-		```	
-		Response Body: {
-		  success: true,
-		  message: 'Total of 15 products retrieved successfully',
-		  data: [
-			{
-			  productId: 1,
-			  name: 'Classic White T-Shirt',
-			  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
-			  price: 19.99
-			},
-			{
-			  productId: 2,
-			  name: 'Slim Fit Jeans',
-			  description: 'Dark wash denim jeans with stretch for comfort',
-			  price: 59.99
-			}	...
-		  ]
-		```
+	--
+				
+			Response Status: 200
+			Response Status Text: OK
+			Response Body: {
+			  success: true,
+			  message: 'Product with ID 1 found',
+			  data: [
+				{
+				  productId: 1,
+				  name: 'Classic White T-Shirt',
+				  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
+				  price: 19.99
+				}
+			  ]
+			}
+			
 
-- 
+	`Sample JSON Response:`
+	
+			```	
+			{
+			  success: true,
+			  message: 'Product with ID 1 found',
+			  data: [
+				{
+				  productId: 1,
+				  name: 'Classic White T-Shirt',
+				  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
+				  price: 19.99
+				}
+			  ]
+			}
+			```
+
+
 - Searching for product using the ProductId
 - Deleting a product using the ProductId
