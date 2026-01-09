@@ -25,14 +25,14 @@ The basic operations include
 │   MinimalApi.csproj
 │   MinimalApi.csproj.user
 │   MinimalApi.slnx
-│   ProductEndpoint.cs
-│   Program.cs
-│   readme.md
+│   ProductEndpoint.cs	// stores all the methods directly used by the main program
+│   Program.cs			// main program detailing the endpoint routes
+│   readme.md			// this readme file
 
 ├───support
-│       Helper.cs		//
-│       JsonHelper.cs	//
-│       ProductSeed.cs		// default products for querying without needing to add products first 
+│       Helper.cs		// helpers for the endpoint, stores response formats etc
+│       JsonHelper.cs	// AI generated helper to detect malformed JSON 
+│       ProductSeed.cs	// default products for querying without needing to add products first 
 
 ├───screenshots			// stores images for this readme file
 ```
