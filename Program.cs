@@ -20,7 +20,6 @@ public class Program
 
         app.MapGet("/error", () => "Sorry, an error occurred");
  
-        
         app.MapGet("/product/show/all", ShowAllProducts);
         
         app.MapGet("/product/search/id/{productId}", SearchById);

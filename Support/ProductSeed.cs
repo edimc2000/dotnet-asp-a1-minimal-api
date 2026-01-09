@@ -1,10 +1,8 @@
 ﻿namespace MinimalApi.Support;
 
 /// <summary> Represents a product in the clothing store inventory. </summary>
-/// <remarks>
-/// This class defines product data structure with both parameterized and
-/// parameterless constructors for serialization support.
-/// </remarks>
+/// <remarks> This class defines product data structure with both parameterized and
+/// parameterless constructors for serialization support. </remarks>
 public class Product
 {
     public int ProductId { get; set; }
@@ -27,17 +25,14 @@ public class Product
     }
 }
 
-/// <summary>
-/// Initializes a new instance of the <see cref="Product"/> class with specified parameters.
-/// </summary>
+/// <summary> Initializes a new instance of the <see cref="Product"/> class with specified
+/// parameters. </summary>
 /// <param name="productId">The unique identifier for the product.</param>
 /// <param name="name">The name of the product.</param>
 /// <param name="description">The detailed description of the product.</param>
 /// <param name="price">The price of the product.</param>
-/// <remarks>
-/// This constructor was created with help from AI to provide a convenient way to instantiate
-/// products with initial values.
-/// </remarks>
+/// <remarks> This constructor was created with help from AI to provide a convenient way to
+/// instantiate products with initial values. </remarks>
 public class ProductSeed
 {
     public static List<Product> clothingProducts = new()
