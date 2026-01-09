@@ -1,6 +1,4 @@
-﻿﻿﻿﻿_This README.md file was created with assistance from AI - DeepSeek. 
-The remaining code was developed without AI support, except where explicitly 
-indicated in the code comments._
+﻿_AI - Deepseek was used in some parts of the codes. Those parts will have a comment about AI usage._
 
 # Minimal API - using ASP.NET
 This is a minimal API implementation using ASP.Net demonstrating API endpoints basic operations.
@@ -181,7 +179,7 @@ The basic operations include
 
 
 
-/*/*/*/*/*/*/*/
+
 - Deleting a product using the ProductId
 
 	`URL`						/product/delete/{productId}
@@ -254,5 +252,133 @@ The basic operations include
 		
 
 
-
 - Adding a product
+
+
+	`URL`						/product/add/
+		
+		`Endpoint HTTP Method `			DELETE		
+		
+	
+	`Authentication`
+	
+		NONE		
+		
+
+	`Parameters`
+	
+	 ```
+	JSON content 		{
+			"name": <text string>, 
+			"description": <text string>,
+			"price": <number double>
+		}
+	```
+	
+	`Request Examples (Playwright post)`
+	
+		request.post('http://product/add/', {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: {
+                "name": "Ribbed Tank Top",
+                "description": 2.00,
+                "price": "22.99"
+            }		
+		
+	
+	`Response status codes:`
+	
+			
+			
+		Response Status: 201
+		Response Status Text: Created
+		Response Body: {
+		  success: true,
+		  message: 'Product 16 added successfully retrieve using /product/search/id/16',
+		  data: {
+			productId: 16,
+			name: 'Ribbed Tank Top',
+			description: 'Slim fit tank top with ribbed texture for layering',
+			price: 22.99
+		  }
+		}
+
+	--
+ 
+				
+		Response Status: 400
+		Response Status Text: Bad Request
+		Response Body: {
+		  success: false,
+		  message: 'Invalid price format. Price must be a valid number.'
+		}
+					
+	--
+				
+		Response Status: 400
+		Response Status Text: Bad Request
+		Response Body: { success: false, message: 'Request body is empty' }
+						
+	--
+							
+		Response Status: 400
+		Response Status Text: Bad Request
+		Response Body: { success: false, message: 'Malformed JSON in request body' }
+		
+
+			
+
+	`Sample JSON Response:`
+	
+			
+
+			
+		{
+		  success: true,
+		  message: 'Product 16 added successfully retrieve using /product/search/id/16',
+		  data: {
+			productId: 16,
+			name: 'Ribbed Tank Top',
+			description: 'Slim fit tank top with ribbed texture for layering',
+			price: 22.99
+		  }
+		}
+
+	--
+ 
+		{
+		  success: false,
+		  message: 'Invalid price format. Price must be a valid number.'
+		}
+					
+	--
+ 
+		{ 
+		  success: false, 
+		  message: 'Request body is empty' 
+		}
+						
+	--
+							
+		{ 
+		  success: false, 
+		  message: 'Malformed JSON in request body' 
+		}
+		
+
+## Test Capture / Report / Screenshots
+
+Test report can be found on this link - https://edimc2000.github.io/dotnet-asp-a1-minimal-api-testing-playwright/
+
+### Report Summary
+![report summart](screenshots/test_report_overview.png)
+
+### Report Sample Detail
+![detail](screenshots/sample_test_detail.png)
+
+		
+## Contact
+
+If you have questions or need further changes, reply here or refer to the course materials.
