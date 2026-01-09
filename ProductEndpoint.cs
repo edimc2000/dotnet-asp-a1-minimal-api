@@ -6,49 +6,41 @@ namespace MinimalApi;
 
 public class ProductEndpoint
 {
-    
     public static IResult ShowAllProducts()
     {
-        WriteLine("\n" + new string('-', 80) + $"\nRETRIEVE ALL");
+        ConsoleDebugging(null, "ShowAllProducts");
         return SearchAllSuccess();
     }
 
     public static IResult SearchById(string productId)
     {
-        WriteLine("\n" + new string('-', 80) + $"\nSEARCH" +
-                  $"\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}" +
-                  $"\nValue received: '{productId}'");
-
-        // This method now handles parsing internally and returns IResult
+        ConsoleDebugging(productId, "SearchById");
         if (!int.TryParse(productId, out int id))
         {
-            WriteLine($"Error: Could not parse '{productId}' to integer");
+            ConsoleDebugging(productId, "ParseFailed");
             return BadRequest($"'{productId}' is not a valid product ID");
         }
 
-        WriteLine($"Successfully parsed to int: {id}");
+        ConsoleDebugging(productId, "ParseSuccess");
         Product product = clothingProducts.FirstOrDefault(p => p.ProductId == id);
 
         if (product == null) return NotFound(id);
-
         return SearchSuccess(id);
     }
 
-    // ** requirement 2 delete product using ProductId 
+
     public static IResult DeleteProduct(string productId)
     {
-        WriteLine("\n" + new string('-', 80) +
-                  $"\nDELETE" +
-                  $"\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}" +
-                  $"\nValue received: '{productId}'");
+
+        ConsoleDebugging(productId, "DeleteProduct");
 
         if (!int.TryParse(productId, out int id))
         {
-            WriteLine($"Error: Could not parse '{productId}' to integer");
+            ConsoleDebugging(productId, "ParseFailed");
             return BadRequest($"'{productId}' is not a valid product ID");
         }
 
-        WriteLine($"Successfully parsed to int: {id}");
+        ConsoleDebugging(productId, "ParseSuccess");
         Product? productToDelete = clothingProducts.FirstOrDefault(p => p.ProductId == id);
 
         if (productToDelete == null)
@@ -115,107 +107,5 @@ public class ProductEndpoint
         clothingProducts.Add(newProduct);
         return AddSuccess(productId, newProduct);
     }
-
-
-    //public static IResult xxxxAddProduct1([FromBody] Product? product)
-    //{
-    //    if (product == null) return BadRequest("Product data is required");
-
-
-    //    // Validate required fields
-    //    if (product.Price.GetType().Name == "String")
-    //    {
-    //        WriteLine("\n" + new string('-', 80) +
-    //                  $"\nADD");
-    //        return Results.BadRequest("Price should be a double");
-    //    }
-
-    //    WriteLine("\n" + new string('-', 80) +
-    //              $"\nADD" +
-    //              $"\nType of productId parameter: {product.Price.GetType()?.Name ?? "null"}" +
-    //              $"\nValue received: '{product.Price}'");
-
-
-    //    //if (!double.TryParse(product.Price, out double priceX))
-    //    //{
-    //    //    WriteLine($"Error: Could not parse '{product.Price}' to double (correct format)");
-    //    //    return BadRequest("Price should be a double");
-    //    //}
-
-
-    //    int lastProductId = clothingProducts.Max(p => p.ProductId);
-    //    int productId = lastProductId + 1;
-
-    //    //debugging 
-    //    WriteLine("\n" + new string('-', 80) +
-    //              $"\nADD");
-    //    WriteLine("lastProductId: " + lastProductId);
-    //    WriteLine($"id: {productId}");
-    //    WriteLine($"Name: {product.Name}");
-    //    WriteLine($"Description: {product.Description}");
-    //    WriteLine($"Price: {product.Price}");
-
-
-    //    // add logic to check if id exists if exist no creation should happen 
-
-    //    // Add your logic to save the product
-    //    Product newProduct = new(productId,
-    //        product.Name,
-    //        product.Description,
-    //        product.Price);
-
-    //    // Add the product to the list
-    //    clothingProducts.Add(newProduct);
-
-    //    return AddSuccess(productId, newProduct);
-    //    //return Results.Ok();
-    //}
-
-
-    // it may return multiple records 
-    public static List<Product> SearchByName(string productname)
-    {
-        WriteLine($"Searching for products starting with: {productname}");
-        // Where() returns IEnumerable, not null, so we need to check if it's empty
-        IEnumerable<Product> products = clothingProducts.Where(p =>
-            p.Name.StartsWith(productname, StringComparison.OrdinalIgnoreCase));
-
-        // Convert to List and check if it's empty
-        List<Product> result = products.ToList();
-
-        if (!result.Any()) // Check if list is empty, not null
-            return ReturnEmpty();
-
-        return result;
-    }
-
-
-    private static string ConvertJsonElementToString(JsonElement? element)
-    {
-        if (!element.HasValue) return string.Empty;
-
-        return element.Value.ValueKind switch
-        {
-            JsonValueKind.String => element.Value.GetString() ?? string.Empty,
-            JsonValueKind.Number => element.Value.GetRawText(),
-            JsonValueKind.True => "true",
-            JsonValueKind.False => "false",
-            JsonValueKind.Null => string.Empty,
-            _ => element.Value.ToString()
-        };
-    }
-
-
-    private static List<Product> ReturnEmpty()
-    {
-        return new List<Product>
-        {
-            new(
-                -1, // value if no products were found 
-                "No products found",
-                $"No products found",
-                0.00
-            )
-        };
-    }
+    
 }

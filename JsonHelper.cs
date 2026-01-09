@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using static MinimalApi.ProductEndpoint;
-
 
 // helper generate with AI for to check if JSON is malformed 
 namespace MinimalApi
@@ -8,9 +6,6 @@ namespace MinimalApi
 {
     partial class Helper
     {
-
-
-        // new helper: read body and try deserialize, returning either the value or an IResult error
         public static async Task<(T? value, IResult? error)> TryReadJsonBodyAsync<T>(HttpRequest request)
         {
             try
