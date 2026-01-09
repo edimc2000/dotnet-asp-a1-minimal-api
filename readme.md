@@ -56,14 +56,13 @@ The basic operations include
 ## API Endpoints
 - Retrieving all the stored products
 
-	`Endpoint`			```		/product/show/all
-		```
-	`Endpoint HTTP Method`			```		GET		
-		```
+	`Endpoint`					/product/show/all
+		
+	`Endpoint HTTP Method`					GET		
+		
 	`Authentication`
-	
-		```		NONE		
-		```
+			NONE		
+		
 	`Parameters`
 	
 		```		NONE		
