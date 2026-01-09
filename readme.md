@@ -23,7 +23,6 @@ The basic operations include
 │   appsettings.Development.json
 │   appsettings.json
 │   MinimalApi.csproj
-│   MinimalApi.csproj.user
 │   MinimalApi.slnx
 │   ProductEndpoint.cs	// stores all the methods directly used by the main program
 │   Program.cs			// main program detailing the endpoint routes
@@ -36,3 +35,22 @@ The basic operations include
 
 ├───screenshots			// stores images for this readme file
 ```
+
+## Build and Run (powershell)
+
+- Restore dependencies 
+```
+dotnet restore
+```
+
+- Build
+```
+dotnet build
+```
+
+- Run
+```
+dotnet run
+```
+
+## API Endpoints
