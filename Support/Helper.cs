@@ -2,33 +2,36 @@
 using System.Text.Json;
 using static MinimalApi.Support.ProductSeed;
 
-
-// helper generate with AI for to check if JSON is malformed 
 namespace MinimalApi;
 
+/// <summary>Helper methods for product API operations.</summary>
+/// <para>Author: Eddie C.</para>
+/// <para>Version: 1.0</para>
+/// <para>Date: Jan. 09, 2026</para>
 internal partial class Helper
 {
-    /// <summary>
-    /// Data transfer object for creating or updating product information with flexible price handling.
-    /// </summary>
+    /// <summary>DTO for flexible product data conversion.</summary>
+    /// <remarks>Uses JsonElement to accept any JSON type for price.</remarks>
     internal class ProductDataConverter
     {
         public JsonElement Name { get; set; }
         public JsonElement Description { get; set; }
-        public JsonElement Price { get; set; } // Use JsonElement to accept any JSON type
+        public JsonElement Price { get; set; } 
     }
 
-
+    /// <summary>Returns formatted bad request response.</summary>
+    /// <param name="message">Error message.</param>
     public static IResult BadRequest(string message)
     {
         return Results.BadRequest(new
         {
             success = false,
-            //message = $"'{productId}' is not a valid product ID"
             message = $"{message}"
         });
     }
-
+    
+    /// <summary>Returns formatted not found response.</summary>
+    /// <param name="productId">Missing product ID.</param>
     public static IResult NotFound(int productId)
     {
         return Results.NotFound(new
@@ -38,7 +41,8 @@ internal partial class Helper
         });
     }
 
-
+    /// <summary>Returns successful delete response.</summary>
+    /// <param name="product">Deleted product.</param>
     public static IResult DeleteSuccess(Product product)
     {
         return Results.Ok(new
@@ -49,7 +53,8 @@ internal partial class Helper
         });
     }
 
-
+    /// <summary>Returns successful product search response.</summary>
+    /// <param name="productId">Found product ID.</param>
     public static IResult SearchSuccess(int productId)
     {
         return Results.Ok(new
@@ -60,7 +65,7 @@ internal partial class Helper
         });
     }
 
-
+    /// <summary>Returns successful all products response.</summary>
     public static IResult SearchAllSuccess()
     {
         return Results.Ok(new
@@ -71,6 +76,9 @@ internal partial class Helper
         });
     }
 
+    /// <summary>Returns successful add response with location.</summary>
+    /// <param name="productId">New product ID.</param>
+    /// <param name="newProduct">Added product.</param>
     public static IResult AddSuccess(int productId, Product newProduct)
     {
         return Results.Created($"/product/search/id/{productId}",
@@ -83,7 +91,9 @@ internal partial class Helper
             });
     }
 
-
+    /// <summary>Converts JsonElement to string based on value kind. AI - Deepseek
+    /// assistance used</summary>
+    /// <param name="element">JSON element to convert.</param>
     internal static string ConvertJsonElementToString(JsonElement? element)
     {
         if (!element.HasValue) return string.Empty;
@@ -99,10 +109,11 @@ internal partial class Helper
         };
     }
 
-    internal static void ConsoleDebugging
-    (
-        string productId, string task
-    )
+
+    /// <summary>Outputs debug info to console for API operations.</summary>
+    /// <param name="productId">Product ID being processed.</param>
+    /// <param name="task">Operation type.</param>
+    internal static void ConsoleDebugging (string productId, string task)
     {
         switch (task)
         {

@@ -9,7 +9,7 @@ namespace MinimalApi;
 /// <remarks>Manages product CRUD operations using in-memory clothing products collection.</remarks>
 /// <para>Author: Eddie C.</para>
 /// <para>Version: 1.0</para>
-/// <para>Date: Jan. 09,2026</para>
+/// <para>Date: Jan. 09, 2026</para>
 public class ProductEndpoint
 {
     /// <summary>Retrieves all products from the collection.</summary>

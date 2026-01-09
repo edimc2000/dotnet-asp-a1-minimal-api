@@ -31,8 +31,8 @@ public class Product
 /// <param name="name">The name of the product.</param>
 /// <param name="description">The detailed description of the product.</param>
 /// <param name="price">The price of the product.</param>
-/// <remarks> This constructor was created with help from AI to provide a convenient way to
-/// instantiate products with initial values. </remarks>
+/// <remarks> This constructor was created with help from AI - Deepseek to provide a convenient
+/// way to instantiate products with initial values. </remarks>
 public class ProductSeed
 {
     public static List<Product> clothingProducts = new()

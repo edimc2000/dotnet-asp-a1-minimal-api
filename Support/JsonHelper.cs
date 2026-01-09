@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 
-/// <summary>JSON helper methods for request processing.</summary>
 namespace MinimalApi;
 
 internal partial class Helper
