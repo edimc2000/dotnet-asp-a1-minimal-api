@@ -180,5 +180,79 @@ The basic operations include
 		
 
 
-- Searching for product using the ProductId
+
+/*/*/*/*/*/*/*/
 - Deleting a product using the ProductId
+
+	`URL`						/product/delete/{productId}
+		
+		`Endpoint HTTP Method `			DELETE		
+		
+	
+	`Authentication`
+	
+		NONE		
+		
+
+	`Parameters`
+	
+		productId, as number - integer
+		ex. 1
+		
+	
+	`Request Examples:`
+	
+		http://url/product/delete/1		
+		
+	
+	`Response status codes:`
+	
+			
+			
+		Response Status: 200
+		Response Status Text: OK
+		Response Body: {
+		  success: true,
+		  message: 'Product deleted',
+		  data: {
+			productId: 1,
+			name: 'Classic White T-Shirt',
+			description: '100% cotton crew neck t-shirt, perfect for everyday wear',
+			price: 19.99
+		  }
+		}
+
+	--
+ 
+				
+		Response Status: 404
+		Response Status Text: Not Found
+		Response Body: { success: false, message: 'Product with ID 1000 not found' }
+		data: undefined
+					
+	
+	--
+				
+		Response Status: 400
+		Response Status Text: Bad Request
+		Response Body: { success: false, message: "'test' is not a valid product ID" }
+			
+
+	`Sample JSON Response:`
+	
+			
+		 {
+		  success: true,
+		  message: 'Product deleted',
+		  data: {
+			productId: 1,
+			name: 'Classic White T-Shirt',
+			description: '100% cotton crew neck t-shirt, perfect for everyday wear',
+			price: 19.99
+		  }
+		}
+		
+
+
+
+- Adding a product
