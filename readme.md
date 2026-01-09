@@ -39,18 +39,64 @@ The basic operations include
 ## Build and Run (powershell)
 
 - Restore dependencies 
-```
-dotnet restore
-```
+	```
+	dotnet restore
+	```
 
 - Build
-```
-dotnet build
-```
+	```
+	dotnet build
+	```
 
 - Run
-```
-dotnet run
-```
+	```
+	dotnet run
+	```
 
 ## API Endpoints
+- Create a new product
+	- `Endpoint URL `			```		http://localhost:5220/product/show/all
+		```
+	- `Endpoint HTTP Method `			```		GET		
+		```
+	- `Authentication:`
+	
+		```		NONE		
+		```
+	- `Parameters:`
+	
+		```		NONE		
+		```
+	- `Request Examples:`
+	
+		```		NONE		
+		```
+	- `Response status codes:`
+	
+		```		Response Status: 200		Response Status Text: OK			Response Status: 405		Response Status Text: Method Not Allowed
+		```
+	- `Sample JSON Response:`
+	
+		```	
+		Response Body: {
+		  success: true,
+		  message: 'Total of 15 products retrieved successfully',
+		  data: [
+			{
+			  productId: 1,
+			  name: 'Classic White T-Shirt',
+			  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
+			  price: 19.99
+			},
+			{
+			  productId: 2,
+			  name: 'Slim Fit Jeans',
+			  description: 'Dark wash denim jeans with stretch for comfort',
+			  price: 59.99
+			}	
+		```
+		
+
+- Retrieving all the stored products
+- Searching for product using the ProductId
+- Deleting a product using the ProductId
