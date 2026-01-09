@@ -1,4 +1,6 @@
-﻿namespace MinimalApi;
+﻿
+
+namespace MinimalApi;
 
 /// <summary> Represents a product in the clothing store inventory. </summary>
 /// <remarks>
@@ -98,3 +100,5 @@ public class ProductSeed
             24.99)
     };
 }
+
+

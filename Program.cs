@@ -1,5 +1,7 @@
-using static MinimalApi.ProductSeed;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using static MinimalApi.ProductEndpoint;
+using static MinimalApi.ProductSeed;
 
 
 namespace MinimalApi;
@@ -16,54 +18,153 @@ public class Program
     {
         // Set environment variable BEFORE creating builder
         //Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production");
+
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         WebApplication app = builder.Build();
-        List<Person> people = new()
+
+        WriteLine($"ENVIRONMENT DEV: {app.Environment.IsDevelopment()}");
+        if (app.Environment.IsDevelopment())
         {
-            new Person("Tom", "Hanks"),
-            new Person("Tommy", "Walsch"),
-            new Person("Denzel", "Washington"),
-            new Person("Leondardo", "DiCaprio"),
-            new Person("Al", "Pacino"),
-            new Person("Morgan", "Freeman")
-        };
-        app.MapGet("/person/{name}",
-            (string name) =>
-            {
-                WriteLine(name);
-                return people.Where(p => p.FirstName.StartsWith(name));
-            }
-        );
+            //app.UseDeveloperExceptionPage();
+            //app.UseExceptionHandler("/error");
+            //app.UseStatusCodePages();
+            app.UseExceptionHandler("/error");
+        }
+        else
+        {
+            app.UseExceptionHandler("/error");
+        }
 
-
+        app.MapGet("/error", () => "Sorry, an error occurred");
         // A1  - Get 
 
-        // ** requirement 1  ** Test 2x
+        // ** requirement 2 show all products   ** Test 2x
         app.MapGet("/product/show/all", ShowAllProducts);
 
 
-        // ** requirement 2  ** Test 3x
+        // ** requirement 2  search for product using ProductId ** Test 3x
         app.MapGet("/product/search/id/{productId}", SearchById);
 
-
-
+        // ** requirement 2 delete product using ProductId 
         app.MapDelete("/product/delete/{productId}", DeleteProduct);
 
 
+        //app.MapPost("/product/add/", AddProduct);
 
 
-        app.MapPost("/product/add/{productId}", AddProduct);
-        
+        //app.MapPost("/product/add/",
+
+
+        //    ([FromBody] Product? product) => // Add nullable type
+        //    {
+
+        //        WriteLine("\n" + new string('-', 80) + $"\nADD");
+        //        if (product == null)
+        //        {
+        //            return Results.BadRequest("Product data is required");
+        //        }
+
+        //        // Process the product...
+        //        return Results.Ok();
+        //    }
+        //);
+        //*********************************************
+   
+
+
+        //*********************************************
+
+        app.MapPost("/product/add/", AddProduct);
+
+
+        app.MapPost("/product/v2/add/{productId}", AddProduct);
+
+
         app.MapGet("/products/count", () => $"Total products: {clothingProducts.Count}");
 
-
-        
         // lower priority 
         app.MapGet("/product/search/name/{productname}", SearchByName);
 
 
+
+        //app.MapPost("/product/add/",
+        //    ([FromBody] ProductDataConverter ?  dto) =>
+        //    {
+        //        WriteLine("\n" + new string('-', 80) + $"\nADD");
+        
+        //        if (dto == null)
+        //        {
+        //            return Results.BadRequest("Product data is required");
+        //        }
+
+        //        // Validate and parse price
+        //        if (string.IsNullOrEmpty(dto.Price) || !double.TryParse(dto.Price, out double price))
+        //        {
+        //            return Results.BadRequest("Invalid price format. Price must be a valid number.");
+        //        }
+
+        //        // Create the actual Product object
+        //        var product = new Product
+        //        {
+        //            Name = dto.Name,
+        //            Description = dto.Description,
+        //            Price = price
+        //        };
+
+        //        // Process the product...
+        //        return Results.Ok("Product added successfully");
+        //    }
+        //);
+
+        //app.MapPost("/product/add/",
+        //    ([FromBody] ProductDataConverter ?  dataConverter) =>
+        //    {
+        //        WriteLine("\n" + new string('-', 80) + $"\nADD");
+        
+        //        if (dataConverter == null)
+        //        {
+        //            return BadRequest("Product data is required");
+        //        }
+
+        //        double price;
+        //        try
+        //        {
+        //            // Try to parse the price from JsonElement
+        //            if (dataConverter.Price.ValueKind == JsonValueKind.String)
+        //            {
+        //                price = double.Parse(dataConverter.Price.GetString()!);
+        //            }
+        //            else if (dataConverter.Price.ValueKind == JsonValueKind.Number)
+        //            {
+        //                price = dataConverter.Price.GetDouble();
+        //            }
+        //            else
+        //            {
+        //                throw new FormatException("Invalid price format");
+        //            }
+        //        }
+        //        catch (Exception)
+        //        {
+        //            return BadRequest("Invalid price format. Price must be a valid number.");
+        //        }
+
+        //        // Create the actual Product object
+        //        Product product = new Product
+        //        {
+        //            Name = dataConverter.Name,
+        //            Description = dataConverter.Description,
+        //            Price = price
+        //        };
+        //        clothingProducts.Add(product);
+        //        // Process the product...
+        //        return Results.Ok($"Product added successfully. Price: {price}");
+        //    }
+        //);
+
+
+
+
+
         app.Run();
     }
-
-    public record Person(string FirstName, string LastName);
 }

@@ -1,12 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using static MinimalApi.ProductEndpoint;
 using static MinimalApi.ProductSeed;
+using static MinimalApi.Helper;
 
 
 namespace MinimalApi;
 
 public class ProductEndpoint
 {
+    public class ProductX
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Price { get; set; }
+
+        // Parameterless constructor for JSON deserialization
+        public ProductX()
+        {
+        }
+
+        // Constructor with parameters
+        public ProductX(int productId, string name, string description, string price)
+        {
+            ProductId = productId;
+            Name = name;
+            Description = description;
+            Price = price;
+        }
+    }
+
+
     // **    used for serching by name 
     private static List<Product> ReturnEmpty()
     {
@@ -21,13 +50,14 @@ public class ProductEndpoint
         };
     }
 
-    
-    public static IResult BadRequest(string productId)
+
+    public static IResult BadRequest(string message)
     {
         return Results.BadRequest(new
         {
             success = false,
-            message = $"'{productId}' is not a valid product ID"
+            //message = $"'{productId}' is not a valid product ID"
+            message = $"{message}"
         });
     }
 
@@ -40,8 +70,8 @@ public class ProductEndpoint
         });
     }
 
-    
-    public static IResult deleteSuccess(Product product)
+
+    public static IResult DeleteSuccess(Product product)
     {
         return Results.Ok(new
         {
@@ -52,9 +82,9 @@ public class ProductEndpoint
     }
 
 
-    public static IResult searchSuccess(int productId)
+    public static IResult SearchSuccess(int productId)
     {
-        return Results.Ok(new 
+        return Results.Ok(new
         {
             success = true,
             message = $"Product with ID {productId} found",
@@ -62,52 +92,50 @@ public class ProductEndpoint
         });
     }
 
-    
-    public static IResult searchAllSuccess()
+
+    public static IResult SearchAllSuccess()
     {
-        return Results.Ok(new 
+        return Results.Ok(new
         {
             success = true,
-            message =  $"Total of {clothingProducts.Count} products retrieved successfully",
-            data = clothingProducts.ToList(),
+            message = $"Total of {clothingProducts.Count} products retrieved successfully",
+            data = clothingProducts.ToList()
         });
-           
     }
 
-
-
-
-
-    //private static ApiResult<List<Product>> ReturnError()
-    //{
-    //    return ApiResult<List<Product>>.Failure(
-    //        "Search requires an integer value",
-    //        "INVALID_PRODUCT_ID"
-    //    );
-    //}
-
-
+    public static IResult AddSuccess(int productId, Product newProduct)
+    {
+        return Results.Created($"/product/search/id/{productId}",
+            new
+            {
+                success = true,
+                Message =
+                    $"Product {productId} added successfully retrieve using /product/search/id/{productId}",
+                data = newProduct
+            });
+    }
 
     // testing is good 2 tests requirement # 1 
     public static IResult ShowAllProducts()
     {
-        //return ApiResult<List<Product>>.SuccessResult(
-        //    clothingProducts.ToList(),
-        //    $"Total of {clothingProducts.Count} products retrieved successfully"
-        //);
-        return searchAllSuccess();
+        WriteLine("\n" + new string('-', 80) +
+                  $"\nRETRIEVE ALL");
+        return SearchAllSuccess();
     }
 
+    // ** requirement 2  search for product using ProductId ** Test 3x
     public static IResult SearchById(string productId)
     {
-        WriteLine($"---\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}");
-        WriteLine($"Value received: '{productId}'");
+        WriteLine("\n" + new string('-', 80) +
+                  $"\nSEARCH" +
+                  $"\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}" +
+                  $"\nValue received: '{productId}'");
 
         // This method now handles parsing internally and returns IResult
         if (!int.TryParse(productId, out int id))
         {
             WriteLine($"Error: Could not parse '{productId}' to integer");
-            return BadRequest(productId);
+            return BadRequest($"'{productId}' is not a valid product ID");
         }
 
         WriteLine($"Successfully parsed to int: {id}");
@@ -115,17 +143,139 @@ public class ProductEndpoint
 
         if (product == null) return NotFound(id);
 
-        // Return success with ApiResult format
-        //return Results.Ok(new ApiResult<List<Product>>
-        //{
-        //    Success = true,
-        //    Message = $"Product with ID {id} found",
-        //    Error = "",
-        //    Data = clothingProducts.Where(p => p.ProductId == id).ToList()
-        //});
-        return searchSuccess(id);
-
+        return SearchSuccess(id);
     }
+
+    // ** requirement 2 delete product using ProductId 
+    public static IResult DeleteProduct(string productId)
+    {
+        WriteLine("\n" + new string('-', 80) +
+                  $"\nDELETE" +
+                  $"\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}" +
+                  $"\nValue received: '{productId}'");
+
+        if (!int.TryParse(productId, out int id))
+        {
+            WriteLine($"Error: Could not parse '{productId}' to integer");
+            return BadRequest($"'{productId}' is not a valid product ID");
+        }
+
+        WriteLine($"Successfully parsed to int: {id}");
+        Product? productToDelete = clothingProducts.FirstOrDefault(p => p.ProductId == id);
+
+        if (productToDelete == null)
+            return NotFound(id);
+
+        bool removed = clothingProducts.Remove(productToDelete);
+
+        if (removed)
+            return DeleteSuccess(productToDelete);
+
+        return Results.Problem();
+    }
+
+    
+    // updated AddProduct to use the helper
+    public static async Task<IResult> AddProduct(HttpRequest request)
+    {
+        int lastProductId = clothingProducts.Max(p => p.ProductId);
+        int productId = lastProductId + 1;
+
+        WriteLine("lastProductId: " + lastProductId);
+        WriteLine($"id: {productId}");
+        WriteLine("\n" + new string('-', 80) + $"\nADD");
+
+        var (dataConverter, error) = await TryReadJsonBodyAsync<ProductDataConverter>(request);
+        if (error != null) return error;
+
+        // dataConverter is non-null here
+        double price;
+        try
+        {
+            if (dataConverter!.Price.ValueKind == JsonValueKind.String)
+            {
+                WriteLine($"\nprice data type { dataConverter.Price.ValueKind }");
+                price = double.Parse(dataConverter.Price.GetString()!);
+            }
+            else if (dataConverter.Price.ValueKind == JsonValueKind.Number)
+                price = dataConverter.Price.GetDouble();
+            else
+                throw new FormatException("Invalid price format");
+        }
+        catch (Exception)
+        {
+            return BadRequest("Invalid price format. Price must be a valid number.");
+        }
+
+        WriteLine($"\nType of price parameter: {price.GetType()?.Name ?? "null"}" +
+                  $"\nValue received: '{price}'");
+
+        Product newProduct = new()
+        {
+            ProductId = productId,
+            Name = ConvertJsonElementToString(dataConverter.Name),
+            Description = ConvertJsonElementToString(dataConverter.Description),
+            Price = price
+        };
+
+        clothingProducts.Add(newProduct);
+        return AddSuccess(productId, newProduct);
+    }
+
+
+    //public static IResult xxxxAddProduct1([FromBody] Product? product)
+    //{
+    //    if (product == null) return BadRequest("Product data is required");
+
+
+    //    // Validate required fields
+    //    if (product.Price.GetType().Name == "String")
+    //    {
+    //        WriteLine("\n" + new string('-', 80) +
+    //                  $"\nADD");
+    //        return Results.BadRequest("Price should be a double");
+    //    }
+
+    //    WriteLine("\n" + new string('-', 80) +
+    //              $"\nADD" +
+    //              $"\nType of productId parameter: {product.Price.GetType()?.Name ?? "null"}" +
+    //              $"\nValue received: '{product.Price}'");
+
+
+    //    //if (!double.TryParse(product.Price, out double priceX))
+    //    //{
+    //    //    WriteLine($"Error: Could not parse '{product.Price}' to double (correct format)");
+    //    //    return BadRequest("Price should be a double");
+    //    //}
+
+
+    //    int lastProductId = clothingProducts.Max(p => p.ProductId);
+    //    int productId = lastProductId + 1;
+
+    //    //debugging 
+    //    WriteLine("\n" + new string('-', 80) +
+    //              $"\nADD");
+    //    WriteLine("lastProductId: " + lastProductId);
+    //    WriteLine($"id: {productId}");
+    //    WriteLine($"Name: {product.Name}");
+    //    WriteLine($"Description: {product.Description}");
+    //    WriteLine($"Price: {product.Price}");
+
+
+    //    // add logic to check if id exists if exist no creation should happen 
+
+    //    // Add your logic to save the product
+    //    Product newProduct = new(productId,
+    //        product.Name,
+    //        product.Description,
+    //        product.Price);
+
+    //    // Add the product to the list
+    //    clothingProducts.Add(newProduct);
+
+    //    return AddSuccess(productId, newProduct);
+    //    //return Results.Ok();
+    //}
 
 
     // it may return multiple records 
@@ -146,86 +296,19 @@ public class ProductEndpoint
     }
 
 
-    public static IResult AddProduct(int productid, Product product)
+
+    private static string ConvertJsonElementToString(JsonElement? element)
     {
-        //debugging 
-        WriteLine($"id: {productid}");
-        WriteLine($"Name: {product.Name}");
-        WriteLine($"Description: {product.Description}");
-        WriteLine($"Price: {product.Price}");
-
-
-        // add logic to check if id exists if exist no creation should happen 
-
-        // Add your logic to save the product
-        Product newProduct = new(productid,
-            product.Name,
-            product.Description,
-            product.Price);
-
-        // Add the product to the list
-        clothingProducts.Add(newProduct);
-
-
-        //return Results.Ok($"Product {productid} added successfully");
-        //return Results.Created();
-        //Uri should be the location where the record can be validated 
-        return Results.Created($"/product/search/{productid}",
-            new
-            {
-                Message = $"Product {productid} added successfully",
-                ProductId = productid,
-                Timestamp = DateTime.UtcNow,
-                newProduct
-            });
-    }
-
-
-    public static IResult DeleteProduct(string productId)
-    //public static void  DeleteProduct(string productId)
-    {
-        WriteLine($"---\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}");
-        WriteLine($"Value received: '{productId}'");
-        WriteLine($"Attempting to delete product ID: {productId}");
-        
-        if (!int.TryParse(productId, out int id))
+        if (!element.HasValue) return string.Empty;
+    
+        return element.Value.ValueKind switch
         {
-            WriteLine($"Error: Could not parse '{productId}' to integer");
-            //return BadRequest(productId);
-        }
-
-        WriteLine($"Successfully parsed to int: {id}");
-        //Product product = clothingProducts.FirstOrDefault(p => p.ProductId == id);
-        Product? productToDelete = clothingProducts.FirstOrDefault(p => p.ProductId == id);
-
-        if (productToDelete == null)
-            // Option 1: Return 404 (item doesn't exist)
-            //return Results.NotFound($"Product with ID {productId} not found");
-            return NotFound(id);
-        // Option 2: Return 204 anyway (idempotent - same result regardless)
-        // return Results.NoContent();
-        bool removed = clothingProducts.Remove(productToDelete);
-
-        if (removed)
-
-            // Option 1: Standard REST - 204 No Content
-            //return Results.NoContent();
-            // Option 2: Return 200 with message
-            // return Results.Ok($"Product {productid} deleted successfully");
-            //Option 3: Return the deleted product
-
-            //return Results.Ok(new
-            //{
-            //    success = true,
-            //    message = "Product deleted",
-            //    deletedProduct = productToDelete
-            //});
-            return deleteSuccess(productToDelete);
-
-        //return Results.Problem("Failed to delete product");
-        return Results.Problem();
+            JsonValueKind.String => element.Value.GetString() ?? string.Empty,
+            JsonValueKind.Number => element.Value.GetRawText(),
+            JsonValueKind.True => "true",
+            JsonValueKind.False => "false",
+            JsonValueKind.Null => string.Empty,
+            _ => element.Value.ToString()
+        };
     }
 }
-
-
-
