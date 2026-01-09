@@ -1,133 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using static MinimalApi.ProductEndpoint;
+﻿using System.Text.Json;
 using static MinimalApi.ProductSeed;
 using static MinimalApi.Helper;
-
 
 namespace MinimalApi;
 
 public class ProductEndpoint
 {
-    public class ProductX
-    {
-        public int ProductId { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Price { get; set; }
-
-        // Parameterless constructor for JSON deserialization
-        public ProductX()
-        {
-        }
-
-        // Constructor with parameters
-        public ProductX(int productId, string name, string description, string price)
-        {
-            ProductId = productId;
-            Name = name;
-            Description = description;
-            Price = price;
-        }
-    }
-
-
-    // **    used for serching by name 
-    private static List<Product> ReturnEmpty()
-    {
-        return new List<Product>
-        {
-            new(
-                -1, // value if no products were found 
-                "No products found",
-                $"No products found",
-                0.00
-            )
-        };
-    }
-
-
-    public static IResult BadRequest(string message)
-    {
-        return Results.BadRequest(new
-        {
-            success = false,
-            //message = $"'{productId}' is not a valid product ID"
-            message = $"{message}"
-        });
-    }
-
-    public static IResult NotFound(int productId)
-    {
-        return Results.NotFound(new
-        {
-            success = false,
-            message = $"Product with ID {productId} not found"
-        });
-    }
-
-
-    public static IResult DeleteSuccess(Product product)
-    {
-        return Results.Ok(new
-        {
-            success = true,
-            message = "Product deleted",
-            data = product
-        });
-    }
-
-
-    public static IResult SearchSuccess(int productId)
-    {
-        return Results.Ok(new
-        {
-            success = true,
-            message = $"Product with ID {productId} found",
-            data = clothingProducts.Where(p => p.ProductId == productId).ToList()
-        });
-    }
-
-
-    public static IResult SearchAllSuccess()
-    {
-        return Results.Ok(new
-        {
-            success = true,
-            message = $"Total of {clothingProducts.Count} products retrieved successfully",
-            data = clothingProducts.ToList()
-        });
-    }
-
-    public static IResult AddSuccess(int productId, Product newProduct)
-    {
-        return Results.Created($"/product/search/id/{productId}",
-            new
-            {
-                success = true,
-                Message =
-                    $"Product {productId} added successfully retrieve using /product/search/id/{productId}",
-                data = newProduct
-            });
-    }
-
-    // testing is good 2 tests requirement # 1 
+    
     public static IResult ShowAllProducts()
     {
-        WriteLine("\n" + new string('-', 80) +
-                  $"\nRETRIEVE ALL");
+        WriteLine("\n" + new string('-', 80) + $"\nRETRIEVE ALL");
         return SearchAllSuccess();
     }
 
-    // ** requirement 2  search for product using ProductId ** Test 3x
     public static IResult SearchById(string productId)
     {
-        WriteLine("\n" + new string('-', 80) +
-                  $"\nSEARCH" +
+        WriteLine("\n" + new string('-', 80) + $"\nSEARCH" +
                   $"\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}" +
                   $"\nValue received: '{productId}'");
 
@@ -174,7 +62,7 @@ public class ProductEndpoint
         return Results.Problem();
     }
 
-    
+
     // updated AddProduct to use the helper
 
     public static async Task<IResult> AddProduct(HttpRequest request)
@@ -186,7 +74,8 @@ public class ProductEndpoint
         WriteLine($"id: {productId}");
         WriteLine("\n" + new string('-', 80) + $"\nADD");
 
-        var (dataConverter, error) = await TryReadJsonBodyAsync<ProductDataConverter>(request);
+        (ProductDataConverter? dataConverter, IResult? error) =
+            await TryReadJsonBodyAsync<ProductDataConverter>(request);
         if (error != null) return error;
 
         // dataConverter is non-null here
@@ -195,13 +84,17 @@ public class ProductEndpoint
         {
             if (dataConverter!.Price.ValueKind == JsonValueKind.String)
             {
-                WriteLine($"\nprice data type { dataConverter.Price.ValueKind }");
+                WriteLine($"\nprice data type {dataConverter.Price.ValueKind}");
                 price = double.Parse(dataConverter.Price.GetString()!);
             }
             else if (dataConverter.Price.ValueKind == JsonValueKind.Number)
+            {
                 price = dataConverter.Price.GetDouble();
+            }
             else
+            {
                 throw new FormatException("Invalid price format");
+            }
         }
         catch (Exception)
         {
@@ -297,11 +190,10 @@ public class ProductEndpoint
     }
 
 
-
     private static string ConvertJsonElementToString(JsonElement? element)
     {
         if (!element.HasValue) return string.Empty;
-    
+
         return element.Value.ValueKind switch
         {
             JsonValueKind.String => element.Value.GetString() ?? string.Empty,
@@ -310,6 +202,20 @@ public class ProductEndpoint
             JsonValueKind.False => "false",
             JsonValueKind.Null => string.Empty,
             _ => element.Value.ToString()
+        };
+    }
+
+
+    private static List<Product> ReturnEmpty()
+    {
+        return new List<Product>
+        {
+            new(
+                -1, // value if no products were found 
+                "No products found",
+                $"No products found",
+                0.00
+            )
         };
     }
 }
