@@ -176,6 +176,7 @@ public class ProductEndpoint
 
     
     // updated AddProduct to use the helper
+
     public static async Task<IResult> AddProduct(HttpRequest request)
     {
         int lastProductId = clothingProducts.Max(p => p.ProductId);

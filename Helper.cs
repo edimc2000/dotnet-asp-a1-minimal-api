@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using static MinimalApi.ProductEndpoint;
-//using static MinimalApi.ProductSeed;
+
 
 namespace MinimalApi
 
