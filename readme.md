@@ -56,7 +56,7 @@ The basic operations include
 ## API Endpoints
 - Retrieving all the stored products
 
-	`Endpoint`					/product/show/all
+	`Endpoint`		/product/show/all
 		
 	`Endpoint HTTP Method`					GET		
 		
@@ -64,30 +64,29 @@ The basic operations include
 			NONE		
 		
 	`Parameters`
-	
-		```		NONE		
-		```
+			NONE		
+
 	`Request Examples`
-	
-		```		http://url/product/show/all		
-		```
+			http://url/product/show/all		
+
 	`Response status codes`
 	
-	
-		```	
+
 		Response Status: 200
 		Response Status Text: OK
 		Response Body: {
 		  success: true,
 		  message: 'Total of 15 products retrieved successfully',
 		  data: [ ...]}
-		```			```	
+	--
+ 		
 		Response Status: 405
 		Response Status Text: Method Not Allowed
-		```
+		
+
 	`Sample JSON Response`
 	
-		```	
+			
 		{
 		  success: true,
 		  message: 'Total of 15 products retrieved successfully',
@@ -106,28 +105,29 @@ The basic operations include
 			}	...
 		  ]
 		}
-		```
+		
 		
 
-- Searching for product using the ProductId	`URL`			```		/product/search/id/{productId}
-		```
-		`Endpoint HTTP Method `			```		GET		
-		```
+- Searching for product using the ProductId	`URL`						/product/search/id/{productId}
+		
+		`Endpoint HTTP Method `			GET		
+		
 	
 	`Authentication`
 	
-		```		NONE		
-		```
+		NONE		
+		
 
 	`Parameters`
 	
-		```		productId, as number - integer
+		productId, as number - integer
 		ex. 1
-			```
+		
+	
 	`Request Examples:`
 	
-		```		http://url/product/search/id/1		
-		```
+		http://url/product/search/id/1		
+		
 	
 	`Response status codes:`
 	
@@ -139,45 +139,45 @@ The basic operations include
 	--
  
 				
-			Response Status: 400
-			Response Status Text: Bad Request
-			Response Body: { success: false, message: "'test' is not a valid product ID" }
+		Response Status: 400
+		Response Status Text: Bad Request
+		Response Body: { success: false, message: "'test' is not a valid product ID" }
 			
 	
 	--
 				
-			Response Status: 200
-			Response Status Text: OK
-			Response Body: {
-			  success: true,
-			  message: 'Product with ID 1 found',
-			  data: [
-				{
-				  productId: 1,
-				  name: 'Classic White T-Shirt',
-				  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
-				  price: 19.99
-				}
-			  ]
+		Response Status: 200
+		Response Status Text: OK
+		Response Body: {
+		  success: true,
+		  message: 'Product with ID 1 found',
+		  data: [
+			{
+			  productId: 1,
+			  name: 'Classic White T-Shirt',
+			  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
+			  price: 19.99
 			}
+		  ]
+		}
 			
 
 	`Sample JSON Response:`
 	
-			```	
+			
+		{
+		  success: true,
+		  message: 'Product with ID 1 found',
+		  data: [
 			{
-			  success: true,
-			  message: 'Product with ID 1 found',
-			  data: [
-				{
-				  productId: 1,
-				  name: 'Classic White T-Shirt',
-				  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
-				  price: 19.99
-				}
-			  ]
+			  productId: 1,
+			  name: 'Classic White T-Shirt',
+			  description: '100% cotton crew neck t-shirt, perfect for everyday wear',
+			  price: 19.99
 			}
-			```
+		  ]
+		}
+		
 
 
 - Searching for product using the ProductId
