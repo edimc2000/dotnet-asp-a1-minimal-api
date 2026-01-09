@@ -1,6 +1,4 @@
-﻿
-
-namespace MinimalApi;
+﻿namespace MinimalApi.Support;
 
 /// <summary> Represents a product in the clothing store inventory. </summary>
 /// <remarks>

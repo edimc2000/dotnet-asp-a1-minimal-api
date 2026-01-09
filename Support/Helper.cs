@@ -1,5 +1,6 @@
-﻿using System.Text.Json;
-using static MinimalApi.ProductSeed;
+﻿using MinimalApi.Support;
+using System.Text.Json;
+using static MinimalApi.Support.ProductSeed;
 
 
 // helper generate with AI for to check if JSON is malformed 
@@ -83,7 +84,6 @@ internal partial class Helper
     }
 
 
-    
     internal static string ConvertJsonElementToString(JsonElement? element)
     {
         if (!element.HasValue) return string.Empty;
@@ -107,11 +107,11 @@ internal partial class Helper
         switch (task)
         {
             case "ShowAllProducts":
-                WriteLine("\n" + new string('-', 80) + $"\nRETRIEVE ALL");
+                WriteLine("\n" + new string('-', 80) + $"\nRETRIEVE ALL PRODUCTS");
                 break;
 
             case "SearchById":
-                WriteLine("\n" + new string('-', 80) + $"\nSEARCH ENDPOINT" +
+                WriteLine("\n" + new string('-', 80) + $"\nSEARCH PRODUCT" +
                           $"\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}" +
                           $"\nValue received: '{productId}'");
                 break;
@@ -126,9 +126,13 @@ internal partial class Helper
 
             case "DeleteProduct":
                 WriteLine("\n" + new string('-', 80) +
-                          $"\nDELETE" +
+                          $"\nDELETE PRODUCT" +
                           $"\nType of productId parameter: {productId?.GetType()?.Name ?? "null"}" +
                           $"\nValue received: '{productId}'");
+                break;
+
+            case "AddProduct":
+                WriteLine("\n" + new string('-', 80) + $"\nADD PRODUCT");
                 break;
 
             default:
