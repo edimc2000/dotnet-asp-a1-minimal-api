@@ -19,11 +19,7 @@ public class Program
         {
             app.UseExceptionHandler("/error");
         }
-        else
-        {
-            app.UseExceptionHandler("/error");
-        }
-
+ 
         app.MapGet("/error", () => "Sorry, an error occurred");
  
         app.MapGet("/product/show/all", ShowAllProducts);
