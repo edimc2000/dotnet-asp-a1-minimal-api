@@ -1,13 +1,22 @@
 ﻿namespace MinimalApi.Support;
 
+using System.ComponentModel.DataAnnotations;
 /// <summary> Represents a product in the clothing store inventory. </summary>
 /// <remarks> This class defines product data structure with both parameterized and
 /// parameterless constructors for serialization support. </remarks>
 public class Product
 {
     public int ProductId { get; set; }
+
+    [Required]
+    [StringLength(100, MinimumLength = 2)]
     public string Name { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(500)]
     public string Description { get; set; } = string.Empty;
+
+    [Range(0.01, 10000)]
     public double Price { get; set; }
 
     // Parameterless constructor for JSON deserialization

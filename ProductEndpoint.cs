@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using static MinimalApi.Support.ProductSeed;
+using System.ComponentModel.DataAnnotations;
 using static MinimalApi.Helper;
 using MinimalApi.Support;
 
@@ -110,6 +111,16 @@ public class ProductEndpoint
             Description = ConvertJsonElementToString(dataConverter.Description),
             Price = price
         };
+
+        // Data annotation validation
+        var validationContext = new ValidationContext(newProduct);
+        var validationResults = new List<ValidationResult>();
+        bool isValid = Validator.TryValidateObject(newProduct, validationContext, validationResults, true);
+        if (!isValid)
+        {
+            var errors = string.Join("; ", validationResults.Select(r => r.ErrorMessage));
+            return BadRequest($"Validation failed: {errors}");
+        }
 
         clothingProducts.Add(newProduct);
         return AddSuccess(productId, newProduct);
