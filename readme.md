@@ -15,7 +15,7 @@ The basic operations include
 - No external libraries
 - ANSI-capable terminal (optional, for colors)
 
-# Files and Folders
+## Files and Folders
 ```
 │   .gitignore
 │   appsettings.Development.json
@@ -54,18 +54,25 @@ The basic operations include
 ## API Endpoints
 - Retrieving all the stored products
 
-	`Endpoint`		/product/show/all
+	`Endpoint`
+
+		/product/show/all
 		
-	`Endpoint HTTP Method`					GET		
+	`Endpoint HTTP Method`
+			
+		GET		
 		
 	`Authentication`
-			NONE		
+	
+		NONE		
 		
 	`Parameters`
-			NONE		
+	
+		NONE		
 
 	`Request Examples`
-			http://url/product/show/all		
+	
+		http://url/product/show/all		
 
 	`Response status codes`
 	
@@ -106,9 +113,16 @@ The basic operations include
 		
 		
 
-- Searching for product using the ProductId	`URL`						/product/search/id/{productId}
+- Searching for product using the ProductId
+
+	`URL`
+				
+		/product/search/id/{productId}
 		
-		`Endpoint HTTP Method `			GET		
+	
+	`Endpoint HTTP Method `
+	
+		GET		
 		
 	
 	`Authentication`
@@ -134,7 +148,8 @@ The basic operations include
 		Response Status Text: Not Found
 		Response Body: { success: false, message: 'Product with ID 1000 not found' }
 		
-	--
+
+	--
  
 				
 		Response Status: 400
@@ -182,9 +197,15 @@ The basic operations include
 
 - Deleting a product using the ProductId
 
-	`URL`						/product/delete/{productId}
+
+	`URL`
+				
+		/product/delete/{productId}
 		
-		`Endpoint HTTP Method `			DELETE		
+	
+	`Endpoint HTTP Method `
+	
+		DELETE		
 		
 	
 	`Authentication`
@@ -255,9 +276,15 @@ The basic operations include
 - Adding a product
 
 
-	`URL`						/product/add/
+
+	`URL`
+				
+		/product/add/
 		
-		`Endpoint HTTP Method `			DELETE		
+	
+	`Endpoint HTTP Method `
+	
+		DELETE		
 		
 	
 	`Authentication`
@@ -268,7 +295,8 @@ The basic operations include
 	`Parameters`
 	
 	 ```
-	JSON content 		{
+	JSON content 
+		{
 			"name": <text string>, 
 			"description": <text string>,
 			"price": <number double>
@@ -380,5 +408,6 @@ Test framework (Playwright) - https://github.com/edimc2000/dotnet-asp-a1-minimal
 ![detail](screenshots/sample_test_detail.png)
 
 		
+
 ## Contact
 If you have questions or need further changes, reply here or refer to the course materials.
